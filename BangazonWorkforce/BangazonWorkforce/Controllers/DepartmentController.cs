@@ -1,178 +1,182 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
 using Dapper;
-using System.Data.SqlClient;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Data.Sqlite;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using System.Data;
 using BangazonWorkforce.Models;
 
-namespace BangazonWorkforce.Controllers
-{
-    public class DepartmentController : Controller
-    {
-        private IConfiguration _config;
-        private IDbConnection Connection
-        {
-            get
-            {
-                return new SqlConnection(_config.GetConnectionString("DefaultConnection"));
-            }
-        }
+namespace BangazonWorkforce.Controllers {
+    public class DepartmentController : Controller {
+        private readonly IConfiguration _config;
 
-        public DepartmentController(IConfiguration config)
-        {
+        public DepartmentController (IConfiguration config) {
             _config = config;
         }
 
-        public async Task<IActionResult> Index()
-        {
-            using (IDbConnection conn = Connection)
-            {
-                string sql = "SELECT Id, Name, Budget FROM Department";
-                IEnumerable<Department> departments = await conn.QueryAsync<Department>(sql);
-
-                return View(departments);
+        public IDbConnection Connection {
+            get {
+                return new SqliteConnection (_config.GetConnectionString ("DefaultConnection"));
             }
         }
 
-        public async Task<IActionResult> Details(int? id) 
-        {
-            if (id == null)
-            {
-                return NotFound();
+        // GET: Department
+        public async Task<IActionResult> Index () {
+            using (IDbConnection conn = Connection) {
+                IEnumerable<Department> departments = await conn.QueryAsync<Department> (
+                    "SELECT Id, Name, Budget FROM Department"
+                );
+                return View (departments);
+            }
+        }
+
+        // GET: Department/Details/5
+        public async Task<IActionResult> Details (int? id) {
+            if (id == null) {
+                return NotFound ();
             }
 
-            Department department = await GetById(id.Value);
-            if (department == null)
-            {
-                return NotFound();
+            string sql = $@"
+            SELECT
+                d.Id,
+                d.Name,
+                d.Budget
+            FROM Department d
+            WHERE d.Id = {id}";
+
+            using (IDbConnection conn = Connection) {
+                Department department = await conn.QuerySingleAsync<Department> (sql);
+
+                if (department == null) {
+                    return NotFound ();
+                }
+
+                return View (department);
             }
-            return View(department);
         }
 
         // GET: Department/Create
-        public IActionResult Create()
-        {
-            return View();
+        public IActionResult Create () {
+            return View ();
         }
 
         // POST: Department/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Name, Budget")] Department department)
-        {
-            if (!ModelState.IsValid)
-            {
-                return View(department);
+        public async Task<IActionResult> Create (Department department) {
+            if (ModelState.IsValid) {
+                string sql = $@"
+                    INSERT INTO Department
+                        ( Name, Budget )
+                        VALUES
+                        ( '{department.Name}', {department.Budget} )
+                    ";
+
+                using (IDbConnection conn = Connection) {
+                    int rowsAffected = await conn.ExecuteAsync (sql);
+
+                    if (rowsAffected > 0) {
+                        return RedirectToAction (nameof (Index));
+                    }
+                }
             }
 
-            using (IDbConnection conn = Connection)
-            {
-                string sql = $@"INSERT INTO Department (Name, Budget) 
-                                     VALUES ('{department.Name}', {department.Budget});";
-
-                await conn.ExecuteAsync(sql);
-                return RedirectToAction(nameof(Index));
-            }
+            return View (department);
         }
 
         // GET: Department/Edit/5
-        public async Task<IActionResult> Edit(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
+        [HttpGet]
+        public async Task<IActionResult> Edit (int? id) {
+            if (id == null) {
+                return NotFound ();
             }
 
-            Department department = await GetById(id.Value);
-            if (department == null)
-            {
-                return NotFound();
+            string sql = $@"
+                SELECT
+                    d.Id,
+                    d.Name,
+                    d.Budget
+                FROM Department d
+                WHERE d.Id = {id}";
+
+            using (IDbConnection conn = Connection) {
+                Department dept = await conn.QuerySingleAsync<Department> (sql);
+                return View (dept);
             }
-            return View(department);
         }
 
         // POST: Department/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, Department department)
-        {
-            if (id != department.Id)
-            {
-                return NotFound();
+        public async Task<IActionResult> Edit (int id, Department department) {
+            if (id != department.Id) {
+                return NotFound ();
             }
 
-            if (!ModelState.IsValid)
-            {
-                return View(department);
-            }
+            if (ModelState.IsValid) {
+                string sql = $@"
+                    UPDATE Department
+                    SET
+                        Name='{department.Name}',
+                        Budget={department.Budget}
+                    WHERE Id={id}";
 
-            using (IDbConnection conn = Connection)
-            {
-                string sql = $@"UPDATE Department 
-                                   SET Name = '{department.Name}', 
-                                       Budget = {department.Id}
-                                 WHERE id = {id}";
-
-                await conn.ExecuteAsync(sql);
-                return RedirectToAction(nameof(Index));
+                using (IDbConnection conn = Connection) {
+                    int rowsAffected = await conn.ExecuteAsync (sql);
+                    if (rowsAffected > 0) {
+                        return RedirectToAction (nameof (Index));
+                    }
+                    throw new Exception ("No rows affected");
+                }
+            } else {
+                return new StatusCodeResult (StatusCodes.Status406NotAcceptable);
             }
         }
 
-
         // GET: Department/Delete/5
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
+        public async Task<IActionResult> Delete (int? id) {
+            if (id == null) {
+                return NotFound ();
             }
 
-            Department department = await GetById(id.Value);
-            if (department == null)
-            {
-                return NotFound();
+            string sql = $@"
+                SELECT d.Id, d.Name
+                FROM Department d
+                WHERE d.Id = {id}";
+
+            using (IDbConnection conn = Connection) {
+                Department dept = (await conn.QueryAsync<Department> (sql)).ToList ().Single ();
+
+                if (dept == null) {
+                    return NotFound ();
+                }
+
+                return View (dept);
             }
-            return View(department);
         }
 
         // POST: Department/Delete/5
-        [HttpPost, ActionName("Delete")]
+        [HttpPost, ActionName ("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            using (IDbConnection conn = Connection)
-            {
-                string sql = $@"DELETE FROM Department WHERE id = {id}";
-                int rowsDeleted = await conn.ExecuteAsync(sql);
-                
-                if (rowsDeleted > 0)
-                {
-                    return NotFound();
+        public async Task<IActionResult> DeleteConfirmed (int id) {
+            string sql = $@"DELETE FROM Department WHERE Id = {id}";
+
+            using (IDbConnection conn = Connection) {
+                int rowsAffected = await conn.ExecuteAsync (sql);
+                if (rowsAffected > 0) {
+                    return RedirectToAction (nameof (Index));
                 }
-
-                return RedirectToAction(nameof(Index));
-            }
-        }
-
-
-        private async Task<Department> GetById(int id)
-        {
-            using (IDbConnection conn = Connection)
-            {
-                string sql = $@"SELECT Id, Name, Budget 
-                                  FROM Department
-                                 WHERE id = {id}";
-
-                IEnumerable<Department> departments = await conn.QueryAsync<Department>(sql);
-                return departments.SingleOrDefault();
+                throw new Exception ("No rows affected");
             }
         }
     }

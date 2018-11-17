@@ -1,4 +1,4 @@
-﻿@model BangazonWorkforce.Models.Employee
+@model BangazonWorkforce.Models.Employee
 
 @{
     ViewData["Title"] = "Delete";
@@ -24,20 +24,15 @@
             @Html.DisplayFor(model => model.LastName)
         </dd>
         <dt>
-            @Html.DisplayNameFor(model => model.IsSupervisor)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.IsSupervisor)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.DepartmentId)
+            @Html.DisplayNameFor(model => model.Department)
         </dt>
         <dd>
             @Html.DisplayFor(model => model.Department.Name)
         </dd>
     </dl>
-    
+
     <form asp-action="Delete">
+        <input type="hidden" asp-for="Id" />
         <input type="submit" value="Delete" class="btn btn-default" /> |
         <a asp-action="Index">Back to List</a>
     </form>

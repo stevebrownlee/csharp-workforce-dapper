@@ -1,4 +1,4 @@
-﻿@model BangazonWorkforce.Models.Employee
+@model BangazonWorkforce.Models.Employee
 
 @{
     ViewData["Title"] = "Details";
@@ -23,20 +23,7 @@
             @Html.DisplayFor(model => model.LastName)
         </dd>
         <dt>
-            @Html.DisplayNameFor(model => model.IsSupervisor)
-        </dt>
-        <dd>
-            @if (!Model.IsSupervisor)
-            {
-                <span>Yes</span>
-            }
-            else
-            {
-                <span>No</span>
-            }
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.DepartmentId)
+            @Html.DisplayNameFor(model => model.Department)
         </dt>
         <dd>
             @Html.DisplayFor(model => model.Department.Name)
@@ -44,6 +31,6 @@
     </dl>
 </div>
 <div>
-    @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
+    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
     <a asp-action="Index">Back to List</a>
 </div>

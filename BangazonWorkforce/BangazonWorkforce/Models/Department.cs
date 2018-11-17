@@ -1,17 +1,21 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace BangazonWorkforce.Models
 {
-
     public class Department
     {
+        [Key]
         public int Id { get; set; }
 
-        [Required(ErrorMessage = "You must provide a name for this department.")]
+        [Required]
         public string Name { get; set; }
 
-        [Required(ErrorMessage = "You must provide a budget for this department.")]
-        [Range(0, int.MaxValue, ErrorMessage = "A budget cannot be less than zero.")]
+        [Required]
+        [DisplayFormat(DataFormatString = "{0:C}", ApplyFormatInEditMode = false)]
         public int Budget { get; set; }
+
+        public ICollection<Employee> Employees { get; set; }
     }
 }
