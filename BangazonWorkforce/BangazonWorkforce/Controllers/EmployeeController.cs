@@ -35,12 +35,11 @@ namespace BangazonWorkforce.Controllers {
                         e.Id,
                         e.FirstName,
                         e.LastName,
-                        e.EmailAddress,
                         e.DepartmentId,
                         d.Id,
                         d.Name
                     FROM Employee e
-                    JOIN Department d ON e.Id = d.Id",
+                    JOIN Department d ON e.DepartmentId = d.Id",
                     (employee, department) => {
                         employee.Department = department;
                         return employee;
@@ -60,8 +59,7 @@ namespace BangazonWorkforce.Controllers {
             SELECT
                 e.Id,
                 e.FirstName,
-                e.LastName,
-                e.EmailAddress
+                e.LastName
             FROM Employee e
             WHERE e.Id = {id}";
 
@@ -78,7 +76,8 @@ namespace BangazonWorkforce.Controllers {
 
         // GET: Employee/Create
         public IActionResult Create () {
-            return View ();
+            var model = new EmployeeCreateViewModel(_config);
+            return View (model);
         }
 
         // POST: Employee/Create
@@ -86,19 +85,18 @@ namespace BangazonWorkforce.Controllers {
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create (Employee employee) {
+        public async Task<IActionResult> Create (EmployeeCreateViewModel model) {
             if (ModelState.IsValid) {
                 string sql = $@"
                     INSERT INTO Employee
-                    ( FirstName, LastName, EmailAddress, Id )
+                    ( FirstName, LastName, DepartmentId )
                     VALUES
-                    ( @FirstName, @LastName, @EmailAddress, @Id )";
+                    ( @FirstName, @LastName,  @DepartmentId )";
 
                 object mapper = new {
-                    FirstName = employee.FirstName,
-                    LastName = employee.LastName,
-                    EmailAddress = employee.EmailAddress,
-                    Id = employee.Id
+                    FirstName = model.Employee.FirstName,
+                    LastName = model.Employee.LastName,
+                    DepartmentId = model.Employee.DepartmentId
                 };
 
                 using (IDbConnection conn = Connection) {
@@ -110,7 +108,7 @@ namespace BangazonWorkforce.Controllers {
                 }
             }
 
-            return View (employee);
+            return View (model);
         }
 
         // GET: Employee/Edit/5
@@ -124,7 +122,6 @@ namespace BangazonWorkforce.Controllers {
                 e.Id,
                 e.FirstName,
                 e.LastName,
-                e.EmailAddress,
                 e.DepartmentId,
                 d.Id,
                 d.Name
@@ -152,7 +149,6 @@ namespace BangazonWorkforce.Controllers {
                 string sql = $@"UPDATE Employee SET
                     FirstName='{model.Employee.FirstName}',
                     LastName='{model.Employee.LastName}',
-                    EmailAddress='{model.Employee.EmailAddress}',
                     Id={model.Employee.Id}
                 WHERE Id={id}";
 

@@ -30,7 +30,14 @@ namespace BangazonWorkforce.Controllers {
         public async Task<IActionResult> Index () {
             using (IDbConnection conn = Connection) {
                 IEnumerable<Department> departments = await conn.QueryAsync<Department> (
-                    "SELECT Id, Name, Budget FROM Department"
+                    @"SELECT
+                        d.Id,
+                        d.Name,
+                        d.Budget,
+                        count(e.Id) EmployeeCount
+                    FROM Department d
+                    LEFT JOIN Employee e on e.DepartmentId = d.Id
+                    GROUP BY d.Id, d.Name, d.Budget"
                 );
                 return View (departments);
             }

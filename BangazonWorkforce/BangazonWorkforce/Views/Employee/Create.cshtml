@@ -1,4 +1,4 @@
-@model BangazonWorkforce.Models.Employee
+@model BangazonWorkforce.Models.ViewModels.EmployeeCreateViewModel
 
 @{
     ViewData["Title"] = "Create";
@@ -13,18 +13,20 @@
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                <label asp-for="FirstName" class="control-label"></label>
-                <input asp-for="FirstName" class="form-control" />
-                <span asp-validation-for="FirstName" class="text-danger"></span>
+                <label asp-for="Employee.FirstName" class="control-label"></label>
+                <input asp-for="Employee.FirstName" class="form-control" />
+                <span asp-validation-for="Employee.FirstName" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="LastName" class="control-label"></label>
-                <input asp-for="LastName" class="form-control" />
-                <span asp-validation-for="LastName" class="text-danger"></span>
+                <label asp-for="Employee.LastName" class="control-label"></label>
+                <input asp-for="Employee.LastName" class="form-control" />
+                <span asp-validation-for="Employee.LastName" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Id" class="control-label"></label>
-                <select asp-for="Id" class ="form-control" asp-items="ViewBag.Id"></select>
+                <label asp-for="Departments" class="control-label"></label>
+                @Html.DropDownListFor(m => m.Employee.DepartmentId,
+                                 Model.Departments,
+                                 new { @class="form-control" })
             </div>
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-default" />

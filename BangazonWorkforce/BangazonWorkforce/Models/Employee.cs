@@ -19,11 +19,6 @@ namespace BangazonWorkforce.Models
         [Display(Name="Last Name")]
         public string LastName { get; set; }
 
-        [Required(ErrorMessage="You must provide an email address for this employee")]
-        [DataType(DataType.EmailAddress)]
-        [Display(Name="Email Address")]
-        public string EmailAddress { get; set; }
-
         [Required(ErrorMessage="Please select which department this employee is assigned to")]
         [Display(Name="Department")]
         public int DepartmentId { get; set; }

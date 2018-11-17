@@ -16,6 +16,7 @@ namespace BangazonWorkforce.Models
         [DisplayFormat(DataFormatString = "{0:C}", ApplyFormatInEditMode = false)]
         public int Budget { get; set; }
 
-        public ICollection<Employee> Employees { get; set; }
+        [Display(Name="Number of Employees")]
+        public int EmployeeCount { get; set; }
     }
 }
