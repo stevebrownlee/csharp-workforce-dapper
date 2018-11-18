@@ -125,7 +125,7 @@ namespace BangazonWorkforce.Controllers {
 
         // GET: Employee/Edit/5
         [HttpGet]
-        public async Task<IActionResult> Edit (int? id) {
+        public async Task<IActionResult> Edit (int id) {
             if (id == null) {
                 return NotFound ();
             }
@@ -138,12 +138,14 @@ namespace BangazonWorkforce.Controllers {
                 d.Id,
                 d.Name
             FROM Employee e
-            JOIN Department d ON e.Id = d.Id
-            WHERE e.EmployeeId = {id}";
+            JOIN Department d ON e.DepartmentId = d.Id
+            WHERE e.Id = {id}";
+
+            EmployeeEditViewModel model = new EmployeeEditViewModel(_config, id);
 
             using (IDbConnection conn = Connection) {
-                Employee dept = await conn.QuerySingleAsync<Employee> (sql);
-                return View (dept);
+                model.Employee = await conn.QuerySingleAsync<Employee> (sql);
+                return View (model);
             }
         }
 
