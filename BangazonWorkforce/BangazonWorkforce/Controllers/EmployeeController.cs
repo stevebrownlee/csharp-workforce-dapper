@@ -59,12 +59,24 @@ namespace BangazonWorkforce.Controllers {
             SELECT
                 e.Id,
                 e.FirstName,
-                e.LastName
+                e.LastName,
+                e.DepartmentId,
+                d.Id,
+                d.Name
             FROM Employee e
+            JOIN Department d ON e.DepartmentId = d.Id
             WHERE e.Id = {id}";
 
             using (IDbConnection conn = Connection) {
-                Employee employee = await conn.QuerySingleAsync<Employee> (sql);
+                Employee employee = (await conn.QueryAsync<Employee, Department, Employee> (
+                    sql,
+                    (e, d) => {
+                        e.Department = d;
+                        return e;
+                    }
+                ))
+                .ToList()
+                .First();
 
                 if (employee == null) {
                     return NotFound ();

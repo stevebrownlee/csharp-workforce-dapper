@@ -1,14 +1,14 @@
 @model IEnumerable<BangazonWorkforce.Models.Department>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Bangazon Departments";
 }
 
-<h2>Index</h2>
+<h2>
+    @ViewData["Title"]
+    <a asp-action="Create"><img style="height:38px;" src="/images/create.png" /></a>
+</h2>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
 <table class="table">
     <thead>
         <tr>
@@ -21,14 +21,15 @@
             <th>
                 @Html.DisplayNameFor(model => model.EmployeeCount)
             </th>
-            <th></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
+    @foreach (var item in Model) {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.Name)
+                <a asp-action="Details" asp-route-id="@item.Id">
+                    @Html.DisplayFor(modelItem => item.Name)
+                </a>
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Budget)
@@ -36,12 +37,7 @@
             <td>
                 @Html.DisplayFor(modelItem => item.EmployeeCount)
             </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
         </tr>
-}
+    }
     </tbody>
 </table>

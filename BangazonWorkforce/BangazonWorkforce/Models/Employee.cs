@@ -19,6 +19,13 @@ namespace BangazonWorkforce.Models
         [Display(Name="Last Name")]
         public string LastName { get; set; }
 
+        [Display(Name="Full Name")]
+        public string FullName {
+            get {
+                return $"{FirstName} {LastName}";
+            }
+        }
+
         [Required(ErrorMessage="Please select which department this employee is assigned to")]
         [Display(Name="Department")]
         public int DepartmentId { get; set; }
