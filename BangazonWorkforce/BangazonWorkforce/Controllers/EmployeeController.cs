@@ -125,7 +125,7 @@ namespace BangazonWorkforce.Controllers {
 
         // GET: Employee/Edit/5
         [HttpGet]
-        public async Task<IActionResult> Edit (int id) {
+        public async Task<IActionResult> Edit (int? id) {
             if (id == null) {
                 return NotFound ();
             }
@@ -141,7 +141,7 @@ namespace BangazonWorkforce.Controllers {
             JOIN Department d ON e.DepartmentId = d.Id
             WHERE e.Id = {id}";
 
-            EmployeeEditViewModel model = new EmployeeEditViewModel(_config, id);
+            EmployeeEditViewModel model = new EmployeeEditViewModel(_config, (int) id);
 
             using (IDbConnection conn = Connection) {
                 model.Employee = await conn.QuerySingleAsync<Employee> (sql);
@@ -163,8 +163,18 @@ namespace BangazonWorkforce.Controllers {
                 string sql = $@"UPDATE Employee SET
                     FirstName='{model.Employee.FirstName}',
                     LastName='{model.Employee.LastName}',
-                    Id={model.Employee.Id}
-                WHERE Id={id}";
+                    DepartmentId={model.Employee.DepartmentId}
+                WHERE Id={id};
+
+                DELETE FROM EmployeeTraining WHERE EmployeeId = {id};
+                ";
+
+                model.SelectedSessions.ForEach(s => sql += $@"
+                    INSERT INTO EmployeeTraining
+                    (EmployeeId, TrainingProgramId)
+                    VALUES
+                    ({id}, {s});
+                ");
 
                 using (IDbConnection conn = Connection) {
                     int rowsAffected = await conn.ExecuteAsync (sql);
