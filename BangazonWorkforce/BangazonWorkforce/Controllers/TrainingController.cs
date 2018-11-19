@@ -122,47 +122,44 @@ namespace BangazonWorkforce.Controllers {
             return View (program);
         }
 
-        // GET: Employee/Edit/5
+        // GET: Training/Edit/5
         [HttpGet]
-        public async Task<IActionResult> Edit (int id) {
+        public async Task<IActionResult> Edit (int? id) {
             if (id == null) {
                 return NotFound ();
             }
 
             string sql = $@"SELECT
-                e.Id,
-                e.FirstName,
-                e.LastName,
-                e.DepartmentId,
-                d.Id,
-                d.Name
-            FROM Employee e
-            JOIN Department d ON e.DepartmentId = d.Id
-            WHERE e.Id = {id}";
-
-            EmployeeEditViewModel model = new EmployeeEditViewModel(_config, id);
+                tp.Id,
+                tp.Title,
+                tp.MaxAttendees,
+                tp.StartDate,
+                tp.EndDate
+            FROM TrainingProgram tp
+            WHERE tp.Id = {id}";
 
             using (IDbConnection conn = Connection) {
-                model.Employee = await conn.QuerySingleAsync<Employee> (sql);
-                return View (model);
+                var program = await conn.QuerySingleAsync<TrainingProgram> (sql);
+                return View (program);
             }
         }
 
-        // POST: Employee/Edit/5
+        // POST: Training/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit (int id, EmployeeEditViewModel model) {
-            if (id != model.Employee.Id) {
+        public async Task<IActionResult> Edit (int id, TrainingProgram program) {
+            if (id != program.Id) {
                 return NotFound ();
             }
 
             if (ModelState.IsValid) {
-                string sql = $@"UPDATE Employee SET
-                    FirstName='{model.Employee.FirstName}',
-                    LastName='{model.Employee.LastName}',
-                    Id={model.Employee.Id}
+                string sql = $@"UPDATE TrainingProgram SET
+                    Title='{program.Title}',
+                    MaxAttendees={program.MaxAttendees},
+                    StartDate='{program.StartDate}',
+                    EndDate='{program.EndDate}'
                 WHERE Id={id}";
 
                 using (IDbConnection conn = Connection) {
@@ -173,7 +170,7 @@ namespace BangazonWorkforce.Controllers {
                     throw new Exception ("No rows affected");
                 }
             } else {
-                return new StatusCodeResult (StatusCodes.Status406NotAcceptable);
+                return View(program);
             }
         }
 
