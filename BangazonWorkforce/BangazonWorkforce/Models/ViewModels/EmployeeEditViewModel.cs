@@ -41,10 +41,7 @@ namespace BangazonWorkforce.Models.ViewModels
 
             using (IDbConnection conn = Connection) {
                 Departments = conn.Query<Department> (
-                    @"SELECT
-                        d.Id,
-                        d.Name
-                    FROM Department d"
+                    @"SELECT d.Id, d.Name FROM Department d"
                 )
                 .OrderBy(l => l.Name)
                 .Select(li => new SelectListItem {

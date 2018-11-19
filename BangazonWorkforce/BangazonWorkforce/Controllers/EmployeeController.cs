@@ -134,11 +134,8 @@ namespace BangazonWorkforce.Controllers {
                 e.Id,
                 e.FirstName,
                 e.LastName,
-                e.DepartmentId,
-                d.Id,
-                d.Name
+                e.DepartmentId
             FROM Employee e
-            JOIN Department d ON e.DepartmentId = d.Id
             WHERE e.Id = {id}";
 
             EmployeeEditViewModel model = new EmployeeEditViewModel(_config, (int) id);
@@ -184,7 +181,7 @@ namespace BangazonWorkforce.Controllers {
                     throw new Exception ("No rows affected");
                 }
             } else {
-                return new StatusCodeResult (StatusCodes.Status406NotAcceptable);
+                return View(model);
             }
         }
 
