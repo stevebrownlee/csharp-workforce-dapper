@@ -33,7 +33,7 @@ namespace BangazonWorkforce.Models
         public virtual Department Department { get; set; }
 
         [Display(Name="Training Programs Attending")]
-        public ICollection<EmployeeTraining> TrainingSessions { get; set; }
+        public List<TrainingProgram> SessionsAttending { get; set; }
 
     }
 }

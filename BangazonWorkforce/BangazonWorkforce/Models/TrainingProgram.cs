@@ -11,11 +11,11 @@ namespace BangazonWorkforce.Models
 
         [Required(ErrorMessage="Please provide a title for training program")]
         [DataType(DataType.Text)]
-        [Display(Name="Training Program Title")]
+        [Display(Name="Subject")]
         public string Title { get; set; }
 
         [Required(ErrorMessage="Please provide the maximum attendees")]
-        [DataType(DataType.Text)]
+        [Range(0, int.MaxValue, ErrorMessage = "Please enter valid integer Number")]
         [Display(Name="Maximum Attendees")]
         public int MaxAttendees { get; set; }
 
@@ -29,6 +29,7 @@ namespace BangazonWorkforce.Models
         [Display(Name="End Date")]
         public DateTime EndDate { get; set; }
 
-        public virtual ICollection<EmployeeTraining> Attendees { get; set; }
+        [Display(Name="Current Attendees")]
+        public virtual List<Employee> Attendees { get; set; } = new List<Employee>();
     }
 }
