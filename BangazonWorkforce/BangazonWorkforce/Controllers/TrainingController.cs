@@ -50,14 +50,13 @@ namespace BangazonWorkforce.Controllers {
                         }
 
                         /*
-                            This is awful and bad
+                            This is awful and bad...
 
                             It is a way to handle a Dapper bug:
                                 https://github.com/StackExchange/Dapper/issues/642
 
-                            Note that above in the SQL that the employee Id column
-                            is wrapped in in an IFNULL() function to ensure that the
-                            Id column is never NULL
+                            Note in the SQL that the employee Id column is wrapped in
+                            an IFNULL() function to ensure that the Id column is never NULL
                         */
                         if (employee.Id != 0) {
                             trainingPrograms[training.Id].Attendees.Add(employee);
@@ -186,33 +185,32 @@ namespace BangazonWorkforce.Controllers {
             }
         }
 
-        // GET: Employee/Delete/5
+        // GET: Training/Delete/5
         public async Task<IActionResult> Delete (int? id) {
             if (id == null) {
                 return NotFound ();
             }
 
-            string sql = $@"
-                SELECT e.Id, e.FirstName, e.LastName
-                FROM Employee e
-                WHERE e.Id = {id}";
+            string sql = $@"SELECT
+                    tp.Id, tp.Title, tp.MaxAttendees, tp.StartDate, tp.EndDate
+                FROM TrainingProgram tp WHERE tp.Id = {id}";
 
             using (IDbConnection conn = Connection) {
-                Employee employee = (await conn.QuerySingleAsync<Employee> (sql));
+                TrainingProgram program = (await conn.QuerySingleAsync<TrainingProgram> (sql));
 
-                if (employee == null) {
+                if (program == null) {
                     return NotFound ();
                 }
 
-                return View (employee);
+                return View (program);
             }
         }
 
-        // POST: Employee/Delete/5
+        // POST: Training/Delete/5
         [HttpPost, ActionName ("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed (int id) {
-            string sql = $@"DELETE FROM Employee WHERE Id = {id}";
+            string sql = $@"DELETE FROM TrainingProgram WHERE Id = {id}";
 
             using (IDbConnection conn = Connection) {
                 int rowsAffected = await conn.ExecuteAsync (sql);
