@@ -7,7 +7,7 @@ namespace BangazonWorkforce.Models
     public class Employee
     {
         [Key]
-        public int Id { get; set; }
+        public long Id { get; set; }
 
         [Required(ErrorMessage="You must provide a first name for this employee")]
         [DataType(DataType.Text)]

@@ -15,7 +15,7 @@ namespace BangazonWorkforce.Models
         public string Title { get; set; }
 
         [Required(ErrorMessage="Please provide the maximum attendees")]
-        [Range(0, int.MaxValue, ErrorMessage = "Please enter valid integer Number")]
+        // [Range(0, Int32.MaxValue, ErrorMessage = "Please enter valid integer Number")]
         [Display(Name="Maximum Attendees")]
         public int MaxAttendees { get; set; }
 

@@ -32,13 +32,13 @@ namespace BangazonWorkforce.Controllers {
             using (IDbConnection conn = Connection) {
                 Dictionary<int, TrainingProgram> trainingPrograms = new Dictionary<int, TrainingProgram>();
 
-                await conn.QueryAsync<TrainingProgram, Employee, object> (
+                await conn.QueryAsync<TrainingProgram, Employee, TrainingProgram> (
                     @"SELECT
                         tp.Id,
                         tp.Title,
                         tp.MaxAttendees,
                         tp.StartDate,
-                        e.Id,
+                        IFNULL(e.Id, 0) as Id,
                         e.FirstName,
                         e.LastName
                     FROM TrainingProgram tp
@@ -49,8 +49,20 @@ namespace BangazonWorkforce.Controllers {
                             trainingPrograms[training.Id] = training;
                         }
 
-                        if (employee != null) trainingPrograms[training.Id].Attendees.Add(employee);
-                        return null;
+                        /*
+                            This is awful and bad
+
+                            It is a way to handle a Dapper bug:
+                                https://github.com/StackExchange/Dapper/issues/642
+
+                            Note that above in the SQL that the employee Id column
+                            is wrapped in in an IFNULL() function to ensure that the
+                            Id column is never NULL
+                        */
+                        if (employee.Id != 0) {
+                            trainingPrograms[training.Id].Attendees.Add(employee);
+                        }
+                        return training;
                     }
                 );
                 var programs = trainingPrograms.Values.AsEnumerable();
