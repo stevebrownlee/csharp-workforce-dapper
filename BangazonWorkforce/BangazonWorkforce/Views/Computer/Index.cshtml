@@ -1,0 +1,38 @@
+@model IEnumerable<BangazonWorkforce.Models.Computer>
+
+@{
+    ViewData["Title"] = "Bangazon Computers";
+}
+
+<h2>
+    @ViewData["Title"]
+    <a asp-action="Create"><img style="height:38px;" src="/images/create.png" /></a>
+</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Make)
+            </th>
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PurchaseDate)
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach (var item in Model) {
+        <tr>
+            <td>
+                <a asp-action="Details" asp-route-id="@item.Id">
+                    @Html.DisplayFor(modelItem => item.Manufacturer) @Html.DisplayFor(modelItem => item.Make)
+                </a>
+            </td>
+            <td>
+                @Html.Label(item.PurchaseDate.Date.ToShortDateString())
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>

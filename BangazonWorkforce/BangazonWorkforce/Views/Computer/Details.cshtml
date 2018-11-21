@@ -1,0 +1,31 @@
+@model BangazonWorkforce.Models.Department
+
+@{
+    ViewData["Title"] = $"{Model.Name} Details";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<hr />
+
+<div>
+    <h3>@Html.DisplayNameFor(model => model.Budget)</h3>
+    <div>
+        @Html.DisplayFor(model => model.Budget)
+    </div>
+
+    <h3>@Html.DisplayNameFor(model => model.Employees) (@Model.Employees.Count)</h3>
+    <ol>
+    @foreach (var employee in Model.Employees) {
+        <li>
+            @Html.DisplayFor(modelItem => employee.FirstName)
+            @Html.DisplayFor(modelItem => employee.LastName)
+        </li>
+    }
+    </ol>
+</div>
+<div class="linkGroup navLinks">
+    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
+    <a asp-action="Delete" asp-route-id="@Model.Id">Delete</a> |
+    <a asp-action="Index">Back to List</a>
+</div>
