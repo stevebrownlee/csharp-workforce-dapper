@@ -51,7 +51,10 @@ namespace BangazonWorkforce.Controllers {
                         e.IsSupervisor
                     FROM Computer c
                     LEFT JOIN ComputerEmployee ce ON c.Id = ce.ComputerId
-                    LEFT JOIN Employee e ON ce.EmployeeId = e.Id",
+                    LEFT JOIN Employee e ON ce.EmployeeId = e.Id
+                    WHERE c.DecomissionDate IS NULL
+                    ORDER BY c.PurchaseDate DESC
+                    ",
                     (c, ce, e) => {
                         if (!computers.ContainsKey(c.Id)) {
                             computers[c.Id] = c;
@@ -173,8 +176,7 @@ namespace BangazonWorkforce.Controllers {
                 string sql = $@"UPDATE Computer SET
                     Make='{computer.Make}',
                     Manufacturer='{computer.Manufacturer}',
-                    PurchaseDate='{computer.PurchaseDate}',
-                    DecomissionDate='{computer.DecomissionDate}'
+                    PurchaseDate='{computer.PurchaseDate}'
                 WHERE Id={id}";
 
                 using (IDbConnection conn = Connection) {
@@ -214,7 +216,11 @@ namespace BangazonWorkforce.Controllers {
         [HttpPost, ActionName ("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed (int id) {
-            string sql = $@"DELETE FROM Computer WHERE Id = {id}";
+            string sql = $@"
+                UPDATE Computer
+                SET DecomissionDate = '{DateTime.Today}'
+                WHERE Id = {id}
+            ";
 
             using (IDbConnection conn = Connection) {
                 int rowsAffected = await conn.ExecuteAsync (sql);

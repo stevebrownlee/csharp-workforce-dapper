@@ -46,6 +46,7 @@ namespace BangazonWorkforce.Controllers {
                     LEFT JOIN ComputerEmployee ce ON ce.EmployeeId = e.Id
                     LEFT JOIN Computer c ON ce.ComputerId = c.Id
                     WHERE ce.UnassignDate IS NULL
+
                     ",
                     (employee, department, computer) => {
                         employee.Department = department;

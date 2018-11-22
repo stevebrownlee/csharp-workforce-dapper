@@ -95,11 +95,12 @@ namespace BangazonWorkforce.Models.ViewModels
                                 c.Id
                             FROM
                                 Computer c
-                            LEFT JOIN ComputerEmployee ce ON ce.Computerid = c.Id
+                            LEFT JOIN ComputerEmployee ce ON ce.ComputerId = c.Id
                         LEFT JOIN Employee e ON e.Id = ce.EmployeeId
                     WHERE
                         ce.AssignDate IS NOT NULL
                         AND ce.UnassignDate IS NULL
+                        AND c.DecomissionDate IS NULL
                         AND EmployeeId != {_employeeId})
                     "
                 )
