@@ -24,6 +24,6 @@ namespace BangazonWorkforce.Models
         public DateTime AssignDate { get; set; }
 
         [Display(Name="Unassigned")]
-        public DateTime UnassignDate { get; set; }
+        public DateTime? UnassignDate { get; set; }
     }
 }

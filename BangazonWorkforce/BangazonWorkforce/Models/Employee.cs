@@ -30,7 +30,8 @@ namespace BangazonWorkforce.Models
         [Display(Name="Department")]
         public int DepartmentId { get; set; }
 
-        public virtual Department Department { get; set; }
+        public Department Department { get; set; }
+        public Computer Computer { get; set; }
 
         [Display(Name="Training Programs Attending")]
         public List<TrainingProgram> SessionsAttending { get; set; }

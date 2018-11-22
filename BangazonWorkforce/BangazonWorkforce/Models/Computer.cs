@@ -20,9 +20,19 @@ namespace BangazonWorkforce.Models
         public DateTime PurchaseDate { get; set; }
 
         [Display(Name="Decomissioned On")]
-        public DateTime DecomissionDate { get; set; }
+        public DateTime? DecomissionDate { get; set; }
 
         [Display(Name="Owners")]
         public List<Employee> Employees { get; set; } = new List<Employee>();
+
+
+        [Display(Name="Current Owner")]
+        public Employee CurrentOwner { get; set; }
+
+        public string Designation {
+            get {
+                return $"{Manufacturer} {Make}";
+            }
+        }
     }
 }

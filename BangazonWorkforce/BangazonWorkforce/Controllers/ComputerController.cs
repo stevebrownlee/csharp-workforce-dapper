@@ -60,6 +60,10 @@ namespace BangazonWorkforce.Controllers {
                         if (e != null) {
                             computers[c.Id].Employees.Add(e);
                         }
+
+                        if (ce != null && ce.UnassignDate == null && ce.AssignDate != null) {
+                            computers[c.Id].CurrentOwner = e;
+                        }
                         return c;
                     }
                 );
@@ -75,14 +79,16 @@ namespace BangazonWorkforce.Controllers {
             }
 
             string sql = $@"
-            SELECT
-                c.Id,
-                c.Make,
-                c.manufacturer,
-                c.PurchaseDate,
-                c.DecomissionDate
-            FROM Computer c
-            WHERE c.Id = {id}";
+                SELECT
+                    c.Id,
+                    c.Make,
+                    c.manufacturer,
+                    c.PurchaseDate,
+                    c.DecomissionDate
+                FROM Computer c
+                WHERE c.Id = {id}
+            ";
+
 
             using (IDbConnection conn = Connection) {
                 Computer computer = await conn.QuerySingleAsync<Computer> (sql);

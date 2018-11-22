@@ -18,18 +18,24 @@
             <th>
                 @Html.DisplayNameFor(model => model.Department)
             </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Computer)
+            </th>
         </tr>
     </thead>
     <tbody>
-    @foreach (var item in Model) {
+    @foreach (var employee in Model) {
         <tr>
             <td>
-                <a asp-action="Details" asp-route-id="@item.Id">
-                    @Html.DisplayFor(modelItem => item.FullName)
+                <a asp-action="Details" asp-route-id="@employee.Id">
+                    @Html.DisplayFor(modelemployee => employee.FullName)
                 </a>
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Department.Name)
+                @Html.DisplayFor(modelemployee => employee.Department.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelemployee => employee.Computer.Designation)
             </td>
         </tr>
     }

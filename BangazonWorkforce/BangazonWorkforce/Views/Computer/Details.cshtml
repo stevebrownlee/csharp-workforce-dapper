@@ -1,29 +1,36 @@
-@model BangazonWorkforce.Models.Department
+@model BangazonWorkforce.Models.Computer
 
 @{
-    ViewData["Title"] = $"{Model.Name} Details";
+    ViewData["Computer"] = $"{Model.Manufacturer} {Model.Make}";
+    ViewData["Title"] = $"{ViewData["Computer"]} Details";
 }
 
 <h2>@ViewData["Title"]</h2>
 
 <hr />
 
-<div>
-    <h3>@Html.DisplayNameFor(model => model.Budget)</h3>
-    <div>
-        @Html.DisplayFor(model => model.Budget)
-    </div>
+<article class="detailGrid">
+    <section>
+        <label>@Html.DisplayNameFor(model => model.PurchaseDate)</label>
+        <div> @Html.DisplayFor(model => model.PurchaseDate) </div>
 
-    <h3>@Html.DisplayNameFor(model => model.Employees) (@Model.Employees.Count)</h3>
-    <ol>
-    @foreach (var employee in Model.Employees) {
-        <li>
-            @Html.DisplayFor(modelItem => employee.FirstName)
-            @Html.DisplayFor(modelItem => employee.LastName)
-        </li>
-    }
-    </ol>
-</div>
+        <label>@Html.DisplayNameFor(model => model.DecomissionDate)</label>
+        <div> @Html.DisplayFor(model => model.DecomissionDate) </div>
+    </section>
+
+    <section>
+        <ol>
+        @foreach (var employee in Model.Employees)
+        {
+            <li>
+                @Html.DisplayFor(modelItem => employee.FirstName)
+                @Html.DisplayFor(modelItem => employee.LastName)
+            </li>
+        }
+        </ol>
+    </section>
+</article>
+
 <div class="linkGroup navLinks">
     <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
     <a asp-action="Delete" asp-route-id="@Model.Id">Delete</a> |

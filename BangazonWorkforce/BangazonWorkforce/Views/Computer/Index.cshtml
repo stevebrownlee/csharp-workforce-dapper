@@ -15,9 +15,11 @@
             <th>
                 @Html.DisplayNameFor(model => model.Make)
             </th>
-            </th>
             <th>
                 @Html.DisplayNameFor(model => model.PurchaseDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CurrentOwner)
             </th>
         </tr>
     </thead>
@@ -31,6 +33,9 @@
             </td>
             <td>
                 @Html.Label(item.PurchaseDate.Date.ToShortDateString())
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CurrentOwner.FullName)
             </td>
         </tr>
     }
