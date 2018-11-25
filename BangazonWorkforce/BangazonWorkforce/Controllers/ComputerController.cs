@@ -34,20 +34,20 @@ namespace BangazonWorkforce.Controllers {
 
                 await conn.QueryAsync<Computer, ComputerEmployee, Employee, Computer> (
                     @"SELECT
-                        c.Id,
+                        IFNULL(c.Id, 0) as Id,
                         c.Make,
                         c.Manufacturer,
                         c.PurchaseDate,
                         c.DecomissionDate,
-                        ce.Id,
-                        ce.ComputerId,
-                        ce.EmployeeId,
+                        IFNULL(ce.Id, 0) as Id,
+                        IFNULL(ce.ComputerId, 0) as ComputerId,
+                        IFNULL(ce.EmployeeId, 0) as EmployeeId,
                         ce.AssignDate,
                         ce.UnassignDate,
-                        e.Id,
+                        IFNULL(e.Id, 0) as Id,
                         e.FirstName,
                         e.LastName,
-                        e.DepartmentId,
+                        IFNULL(e.DepartmentId, 0) as DepartmentId,
                         e.IsSupervisor
                     FROM Computer c
                     LEFT JOIN ComputerEmployee ce ON c.Id = ce.ComputerId
@@ -56,15 +56,15 @@ namespace BangazonWorkforce.Controllers {
                     ORDER BY c.PurchaseDate DESC
                     ",
                     (c, ce, e) => {
-                        if (!computers.ContainsKey(c.Id)) {
+                        if (!computers.ContainsKey(c.Id) && c.Id != 0) {
                             computers[c.Id] = c;
                         }
 
-                        if (e != null) {
+                        if (e.Id != 0) {
                             computers[c.Id].Employees.Add(e);
                         }
 
-                        if (ce != null && ce.UnassignDate == null && ce.AssignDate != null) {
+                        if (ce.Id != 0 && ce.UnassignDate == null && ce.AssignDate != null) {
                             computers[c.Id].CurrentOwner = e;
                         }
                         return c;
